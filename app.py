@@ -12,9 +12,9 @@ USUARIOS = {
     "admin": {"password": "Xk9#mP2$vL7qW4nZ", "role": "admin"},
 }
 
-
+"""
 def verificar_token():
-    """Devuelve el payload del token o None si no es válido."""
+    #Devuelve el payload del token o None si no es válido.
     auth = request.headers.get("Authorization", "")
     if not auth.startswith("Bearer "):
         return None
@@ -27,7 +27,20 @@ def verificar_token():
         return jwt.decode(token, SECRET, algorithms=[header["alg"]])
     except jwt.PyJWTError:
         return None
+"""
 
+#PARCHE
+def verificar_token():
+    """Devuelve el payload del token o None si no es válido."""
+    auth = request.headers.get("Authorization", "")
+    if not auth.startswith("Bearer "):
+        return None
+    token = auth[len("Bearer "):]
+    try:
+        # PARCHE: el servidor decide el algoritmo, no el token
+        return jwt.decode(token, SECRET, algorithms=["HS256"])
+    except jwt.PyJWTError:
+        return None
 
 @app.post("/login")
 def login():
